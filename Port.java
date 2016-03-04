@@ -1,4 +1,4 @@
-package vlanTree;
+package vlantree;
 
 public class Port {
 

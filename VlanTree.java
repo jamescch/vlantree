@@ -1,4 +1,4 @@
-package vlanTree;
+package vlantree;
 
 import java.util.HashMap;
 import java.util.Map;
