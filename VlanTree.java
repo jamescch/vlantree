@@ -102,6 +102,10 @@ public class VlanTree {
     	return true;
     }
         
+    public Node getRoot(){
+    	return nodeMap.get(nodeMap.keySet().iterator().next());
+    }
+    
     public void print(){
         System.out.println("tree-id: " + id);
         
