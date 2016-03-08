@@ -22,11 +22,19 @@ public class Node {
     }
     
     public boolean hasOnlyOneLink(){
-        if(extCount == 0 && intCount ==1){
+        if(extCount == 0 && intCount == 1){
             return true;
         }else{
             return false;
         }
+    }
+    
+    public boolean isOrphan(){
+    	if(extCount == 0 && intCount == 0){
+    		return true;
+    	}else{
+    		return false;
+    	}
     }
     
     public Map<String, Link> getLinks(){

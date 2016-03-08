@@ -8,6 +8,7 @@ public class VlanTree {
     private String id; // the vlan
     private Map<String, Node> nodeMap;
     
+    
     public VlanTree(String id){
         this.id = id;
         nodeMap = new HashMap<String, Node>();
@@ -85,8 +86,20 @@ public class VlanTree {
             removeRecursively(nextNodeId);
             
         }else{
-            return;
+        	return;
         }
+    }
+    
+    public boolean hasLeaves(){
+    	if(nodeMap.size() == 1){
+    		String nodeId = nodeMap.keySet().iterator().next();
+    		Node node = nodeMap.get(nodeId);
+    		
+    		if(node.isOrphan()){
+    			return false;
+    		}
+    	}
+    	return true;
     }
         
     public void print(){

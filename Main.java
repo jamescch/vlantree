@@ -37,6 +37,7 @@ public class Main {
         
         vlanTreeManager.removeLeafFromTree("200", "openflow:11:2");
         vlanTreeManager.removeLeafFromTree("200", "openflow:7:2");
+        vlanTreeManager.removeLeafFromTree("200", "openflow:6:3");
         
         vlanTreeManager.print("200");
 
