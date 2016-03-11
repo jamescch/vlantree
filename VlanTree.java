@@ -1,15 +1,16 @@
 package vlantree;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class VlanTree {
     
-    private String id; // the vlan
+    private Integer id; // the vlan
     private Map<String, Node> nodeMap;
     
     
-    public VlanTree(String id){
+    public VlanTree(Integer id){
         this.id = id;
         nodeMap = new HashMap<String, Node>();
     }
@@ -67,15 +68,19 @@ public class VlanTree {
         node.removeExtPort(portId);
     }
     
-    public void removeRecursively(String nodeId){
+    public void removeRecursively(String nodeId, ArrayList<String> portsToRemove){
         Node node = nodeMap.get(nodeId);
+        
         if(node.hasOnlyOneLink()){
             Map<String, Link> links = node.getLinks(); 
             
             String linkId = links.keySet().iterator().next();
             Link link = links.get(linkId);
             
-             
+            // remove ports of the link
+            portsToRemove.add(link.getSrc());
+            portsToRemove.add(link.getDst());
+            
             String nextPortId = link.getDst();
             String nextNodeId = nextPortId.substring(0, nextPortId.lastIndexOf(":"));
             
@@ -83,7 +88,7 @@ public class VlanTree {
             nextNode.removeLink(nextPortId);
             
             nodeMap.remove(nodeId);
-            removeRecursively(nextNodeId);
+            removeRecursively(nextNodeId, portsToRemove);
             
         }else{
         	return;
@@ -102,8 +107,8 @@ public class VlanTree {
     	return true;
     }
         
-    public Node getRoot(){
-    	return nodeMap.get(nodeMap.keySet().iterator().next());
+    public String getRoot(){
+    	return nodeMap.get(nodeMap.keySet().iterator().next()).getId();
     }
     
     public void print(){

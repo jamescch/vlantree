@@ -4,33 +4,39 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author James
+ * 
+ * This class maintains the vlan information in a tree view.
+ *
+ */
 public class VlanTreeManager {
 	
-	ArrayList<String> vlan_active;
-    Map<String, VlanTree> vlanTreeMap;
+//	ArrayList<String> vlan_active;
+    Map<Integer, VlanTree> vlanTreeMap;
     
     public VlanTreeManager(){
-        vlanTreeMap = new HashMap<String, VlanTree>();
-        vlan_active = new ArrayList<String>();
+        vlanTreeMap = new HashMap<Integer, VlanTree>();
+//        vlan_active = new ArrayList<String>();
     }
     
-    private void createTree(String vlanId){
-    	vlan_active.add(vlanId);
+    private void createTree(Integer vlanId){
+//    	vlan_active.add(vlanId);
     	
         VlanTree vlanTree = new VlanTree(vlanId);
         vlanTreeMap.put(vlanId, vlanTree);
     }
     
-    private void removeTree(String vlanId){
-    	vlan_active.remove(vlanId);
+    private void removeTree(Integer vlanId){
+//    	vlan_active.remove(vlanId);
     	vlanTreeMap.remove(vlanId);
     }
     
-    private boolean hasTree(String vlanId){
+    private boolean hasTree(Integer vlanId){
     	return vlanTreeMap.containsKey(vlanId);
     }
     
-    public void addLeafToTree(String vlanId, String portId){
+    public void addLeafToTree(Integer vlanId, String portId){
     	if(!this.hasTree(vlanId)){
     		this.createTree(vlanId);
     	}
@@ -39,34 +45,49 @@ public class VlanTreeManager {
         vlanTree.addExtPort(portId);
     }
     
-    public void removeLeafFromTree(String vlanId, String portId){
+    /**
+     * Remove a leaf from a tree and return a list of ports that
+     * will be removed during the reconstruction process 
+     * 
+     * @param vlanId
+     * @param portId
+     * @return A list of ports to be removed
+     */
+    public ArrayList<String> removeLeafFromTree(Integer vlanId, String portId){
+    	ArrayList<String> portsToRemove = new ArrayList<String>();
+    	portsToRemove.add(portId);
+    	
     	if(this.hasTree(vlanId)){
     		
 	        VlanTree vlanTree = vlanTreeMap.get(vlanId);
 	        vlanTree.removeExtPort(portId);
 	        
 	        String nodeId = portId.substring(0, portId.lastIndexOf(":"));
-	        vlanTree.removeRecursively(nodeId);
+	        vlanTree.removeRecursively(nodeId, portsToRemove);
 	        
 	        if(vlanTree.hasLeaves() != true){
 	        	this.removeTree(vlanId);
 	        }
 	        
+	        return portsToRemove;
+	        
     	}
+    	
+    	return null;
     }
     
-    public void addLinkToTree(String vlanId, String srcPort, String dstPort){
+    public void addLinkToTree(Integer vlanId, String srcPort, String dstPort){
     	if(this.hasTree(vlanId)){
 	        VlanTree vlanTree = vlanTreeMap.get(vlanId);
 	        vlanTree.addLink(srcPort, dstPort);
     	}
     }
     
-    public Node getRoot(String vlanId){
+    public String getRoot(Integer vlanId){
     	return vlanTreeMap.get(vlanId).getRoot();
     }
     
-    public void print(String vlanId){
+    public void print(Integer vlanId){
         VlanTree vlanTree = vlanTreeMap.get(vlanId);
         if(vlanTree == null){
         	System.out.println("Tree "+vlanId+" is empty");
